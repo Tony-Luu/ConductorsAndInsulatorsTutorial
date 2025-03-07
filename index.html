@@ -1,44 +1,103 @@
 <!DOCTYPE html>
 <html lang="en-us">
 
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | %UNITY_WEB_NAME%</title>
-    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
-    <script>
-    var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Twinkl Game | ConductorsAndInsulators</title>
+  <script src="Build/ConductorsAndInsulatorsTutorial.loader.js"></script>
+</head>
 
-    function UnityProgress(unityInstance, progress) {
-        //unityInstance.logo.style.display = unityInstance.progress.style.display = "none";
-        var unityContainer = document.getElementById('unityContainer');
-        var spinner = document.getElementById("twinkl-go-spinner");
-        spinner.style.width = unityContainer.style.width;
-        spinner.style.height = unityContainer.style.height;
+<body style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px; margin: auto">
+  <canvas tabindex="1" id="unity-canvas" width=1280 height=720
+    style="position: absolute; width: 100%; height: 100%; outline: none; background: #231F20"></canvas>
 
-        if (progress == 1)
-            spinner.style.display = "none";
+<div id="twinkl-go-spinner"
+    style="position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: white">
+    <img src="assets/_preloader.gif">
+  </div>
+  <script>
+    var canScrollWithArrowKeys = true;
+
+
+    if (typeof createUnityInstance != "undefined") {
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/ConductorsAndInsulatorsTutorial.data.unityweb",
+        frameworkUrl: "Build/ConductorsAndInsulatorsTutorial.framework.js.unityweb",
+        codeUrl: "Build/ConductorsAndInsulatorsTutorial.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Twinkl",
+        productName: "ConductorsAndInsulators",
+        productVersion: "0.1",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }, UnityProgress);
     }
-    </script>
-    <style>
-        #twinkl-go-spinner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1280px;
-            height: 720px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
-  </head>
 
-  <body>
-    <div id="unityContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px; margin: auto"></div>
-    <div id="twinkl-go-spinner">
-<img src="assets/_preloader.gif">    </div>
-  </body>
+
+
+    function UnityProgress(progress) {
+      var unityContainer = document.getElementById('unity-canvas');
+      var spinner = document.getElementById("twinkl-go-spinner");
+
+      if (progress == 1) {
+        spinner.style.display = "none";
+      }
+    }
+
+    var canvas = document.getElementById("unity-canvas");
+    canvas.addEventListener("mousedown", onMouseDown, false);
+
+    function onMouseDown(event) {
+      canvas.focus();
+    }
+
+    ////////////////////////////
+    //Keyboard input handling
+    canvas.addEventListener("focus", function () {
+      // Prevent scrolling with arrow keys
+      canScrollWithArrowKeys = false;
+    });
+
+    canvas.addEventListener("blur", function () {
+      // Allow scrolling again
+      canScrollWithArrowKeys = true;
+    });
+
+    //On keydown, prevent scrolling with arrow keys
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        if (!canScrollWithArrowKeys) {
+          event.preventDefault();
+        }
+      }
+    });
+
+    //Set the canvas to fullscreen
+    function ToggleFullScreenJS() {
+      if (!document.fullscreenElement) {
+        canvas.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    //Capture any errors to prevent pop ups to the user
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.error(message);
+      return true;
+    };
+
+    //Prevent any alerts from showing and log to console
+    window.alert = function (message) {
+      console.log("Game Error: " + message);
+    };
+
+    ////////////////////////////
+
+  </script>
+</body>
 
 </html>
